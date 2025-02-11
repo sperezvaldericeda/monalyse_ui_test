@@ -11,7 +11,7 @@ class TopBlocProviders extends StatelessWidget {
   final Widget child;
   final _getIt = GetIt.instance;
 
-  TopBlocProviders({Key? key, required this.child}) : super(key: key);
+  TopBlocProviders({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

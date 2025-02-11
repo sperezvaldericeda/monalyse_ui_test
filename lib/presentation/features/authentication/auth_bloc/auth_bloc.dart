@@ -48,7 +48,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     data.when(
       failure: (_) => emit(
         state.copyWith(
-          screenStatus: const ScreenStatus.error(),
+          // screenStatus: const ScreenStatus.error(),
+          userAuthStatus: const UserAuthStatus.loggedIn(),
         ),
       ),
       success: (value) => emit(

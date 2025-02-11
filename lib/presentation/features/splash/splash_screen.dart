@@ -16,7 +16,7 @@ class SplashScreen extends StatelessWidget {
               flex: 1,
             ),
             Text(
-              'Clean Template',
+              'Monalyse',
               style: AppFonts.bodyMd.copyWith(color: AppColors.primaryWhite),
             ),
             const Divider(

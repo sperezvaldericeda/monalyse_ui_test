@@ -10,7 +10,7 @@ class CurlLoggerDioInterceptor extends Interceptor {
   CurlLoggerDioInterceptor({this.printOnSuccess, this.convertFormData = true});
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     // Call the _renderCurlRepresentation method and pass the requestOptions from the error
     _renderCurlRepresentation(err.requestOptions);
 
@@ -20,9 +20,9 @@ class CurlLoggerDioInterceptor extends Interceptor {
 
   @override
   void onResponse(
-      Response response,
-      ResponseInterceptorHandler handler,
-      ) {
+    Response response,
+    ResponseInterceptorHandler handler,
+  ) {
     // If printOnSuccess is defined and set to true, call the _renderCurlRepresentation method and pass the requestOptions from the response
     if (printOnSuccess != null && printOnSuccess == true) {
       _renderCurlRepresentation(response.requestOptions);

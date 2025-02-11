@@ -13,7 +13,7 @@ _$ExampleRemoteEntityImpl _$$ExampleRemoteEntityImplFromJson(
       pk: (json['pk'] as num).toInt(),
       status: json['status'] as String,
       title: json['title'] as String,
-      primaryDescription: json['primary_description'] as String,
+      primaryDescription: json['primaryDescription'] as String,
       description: json['description'] as String,
     );
 
@@ -24,6 +24,6 @@ Map<String, dynamic> _$$ExampleRemoteEntityImplToJson(
       'pk': instance.pk,
       'status': instance.status,
       'title': instance.title,
-      'primary_description': instance.primaryDescription,
+      'primaryDescription': instance.primaryDescription,
       'description': instance.description,
     };

@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     routes: appRoutes,
   );
 
-  MyApp({Key? key}) : super(key: key);
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

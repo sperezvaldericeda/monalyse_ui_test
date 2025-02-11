@@ -11,7 +11,7 @@ class ExampleRemoteEntity with _$ExampleRemoteEntity {
     required int pk,
     required String status,
     required String title,
-    @JsonKey(name: 'primary_description') required String primaryDescription,
+    required String primaryDescription,
     required String description,
   }) = _ExampleRemoteEntity;
 

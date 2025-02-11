@@ -24,7 +24,6 @@ mixin _$ExampleRemoteEntity {
   int get pk => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  @JsonKey(name: 'primary_description')
   String get primaryDescription => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
 
@@ -49,7 +48,7 @@ abstract class $ExampleRemoteEntityCopyWith<$Res> {
       int pk,
       String status,
       String title,
-      @JsonKey(name: 'primary_description') String primaryDescription,
+      String primaryDescription,
       String description});
 }
 
@@ -117,7 +116,7 @@ abstract class _$$ExampleRemoteEntityImplCopyWith<$Res>
       int pk,
       String status,
       String title,
-      @JsonKey(name: 'primary_description') String primaryDescription,
+      String primaryDescription,
       String description});
 }
 
@@ -178,7 +177,7 @@ class _$ExampleRemoteEntityImpl implements _ExampleRemoteEntity {
       required this.pk,
       required this.status,
       required this.title,
-      @JsonKey(name: 'primary_description') required this.primaryDescription,
+      required this.primaryDescription,
       required this.description});
 
   factory _$ExampleRemoteEntityImpl.fromJson(Map<String, dynamic> json) =>
@@ -193,7 +192,6 @@ class _$ExampleRemoteEntityImpl implements _ExampleRemoteEntity {
   @override
   final String title;
   @override
-  @JsonKey(name: 'primary_description')
   final String primaryDescription;
   @override
   final String description;
@@ -246,7 +244,6 @@ abstract class _ExampleRemoteEntity implements ExampleRemoteEntity {
       required final int pk,
       required final String status,
       required final String title,
-      @JsonKey(name: 'primary_description')
       required final String primaryDescription,
       required final String description}) = _$ExampleRemoteEntityImpl;
 
@@ -262,7 +259,6 @@ abstract class _ExampleRemoteEntity implements ExampleRemoteEntity {
   @override
   String get title;
   @override
-  @JsonKey(name: 'primary_description')
   String get primaryDescription;
   @override
   String get description;
