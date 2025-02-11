@@ -11,8 +11,21 @@ pubspec.lock
 # If you don't generate documentation locally you can remove this line.
 doc/api/
 
+# Archivos de plataforma
+android/.gradle/
+android/app/debug.keystore
+ios/Flutter/
+ios/.generated/
+ios/.symlinks/
+
 # dotenv environment variables file
 .env*
+*.secret
+
+# Editor Settings (VS Code / IntelliJ / Android Studio)
+.vscode/
+.idea/
+*.iml
 
 # Avoid committing generated Javascript files:
 *.dart.js
@@ -23,5 +36,6 @@ doc/api/
 *.js.deps
 *.js.map
 
+# Flutter Plugins
 .flutter-plugins
 .flutter-plugins-dependencies
