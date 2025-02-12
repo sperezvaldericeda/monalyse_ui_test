@@ -1,29 +1,190 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:monalyse_ui_test/app/config/app_fonts.dart';
-import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
+import 'package:intl/intl.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_event.dart';
-import 'package:monalyse_ui_test/presentation/top_blocs/language_bloc/language_bloc.dart';
-import 'package:monalyse_ui_test/presentation/top_blocs/language_bloc/language_bloc_event.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String _filter = "";
+  String _selectedArticleType = "All";
+  DateTime? _fromDate;
+  DateTime? _toDate;
+
+  final List<Map<String, String>> _articles = List.generate(25, (index) {
+    return {
+      "title": "Artículo $index: Nueva tendencia en streaming",
+      "source": "Fuente $index",
+      "date": "04-02-2025 13:0$index",
+      "content": index % 3 == 0
+          ? "Netflix anuncia nueva serie exclusiva."
+          : "Otras noticias sobre streaming."
+    };
+  });
+
+  List<Map<String, String>> get _filteredArticles {
+    return _articles.where((article) {
+      final bool matchesFilter = _filter.isEmpty ||
+          article["content"]!.toLowerCase().contains(_filter);
+      final bool matchesDate = (_fromDate == null ||
+              DateFormat("dd-MM-yyyy HH:mm")
+                  .parse(article["date"]!)
+                  .isAfter(_fromDate!)) &&
+          (_toDate == null ||
+              DateFormat("dd-MM-yyyy HH:mm")
+                  .parse(article["date"]!)
+                  .isBefore(_toDate!));
+      return matchesFilter && matchesDate;
+    }).toList();
+  }
+
+  void _applyFilter() {
+    setState(() {});
+  }
+
+  void _resetFilter() {
+    setState(() {
+      _filter = "";
+      _selectedArticleType = "All";
+      _fromDate = null;
+      _toDate = null;
+    });
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isFrom) async {
+    DateTime initialDate =
+        isFrom ? _fromDate ?? DateTime.now() : _toDate ?? DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isFrom) {
+          _fromDate = picked;
+        } else {
+          _toDate = picked;
+        }
+      });
+    }
+  }
+
+  void _showFilterModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButton<String>(
+                value: _selectedArticleType,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedArticleType = newValue!;
+                  });
+                },
+                items: ["All", "News", "Reviews", "Interviews"]
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: "Search"),
+                onChanged: (value) {
+                  _filter = value.toLowerCase();
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("From"),
+                      TextButton(
+                        onPressed: () => _selectDate(context, true),
+                        child: Text(_fromDate == null
+                            ? "Select Date"
+                            : DateFormat("dd/MM/yyyy").format(_fromDate!)),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("To"),
+                      TextButton(
+                        onPressed: () => _selectDate(context, false),
+                        child: Text(_toDate == null
+                            ? "Select Date"
+                            : DateFormat("dd/MM/yyyy").format(_toDate!)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _applyFilter();
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Apply Filters"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _resetFilter();
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Reset"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _logOut(BuildContext context) =>
+      context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF404A66), // Azul oscuro
-        title: const Text("1. Mediamonitoring Netf"),
+        backgroundColor: const Color(0xFF404A66),
+        title: const Text(
+          "Mediamonitoring Netf",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset('assets/logos/monalyse_logo_2.jpeg', height: 50),
+        ),
         actions: [
           IconButton(
-            color: const Color.fromARGB(255, 255, 255, 255),
+            color: Colors.white,
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              _logOut(context);
-            },
+            onPressed: () => _logOut(context),
           ),
         ],
       ),
@@ -31,16 +192,18 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            // Botones superiores
+            // Filtros
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _customButton("FILTERS"),
-                _customButton("SEARCH"),
-                _customButton("RESET"),
+                ElevatedButton(
+                  onPressed: () => _showFilterModal(context),
+                  child: const Text("FILTER"),
+                ),
               ],
             ),
             const SizedBox(height: 10),
+
             // Nube de palabras (simulación con un Container)
             Container(
               height: 120,
@@ -50,7 +213,8 @@ class HomeScreen extends StatelessWidget {
                 border: Border.all(color: Colors.grey.shade300),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Color.fromARGB(
+                        (0.1 * 255).toInt(), 0, 0, 0), // Using withValues
                     blurRadius: 5,
                   ),
                 ],
@@ -66,19 +230,11 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 10),
             // Lista de artículos
             Expanded(
-              child: ListView(
-                children: [
-                  _articleCard("📱 De iPad/tablet, waarvoor gebruik jij hem?",
-                      "MacFreak", "04-02-2025 13:09"),
-                  _articleCard(
-                      "📱 Heftige WOII-serie 'De Zaak Menten' gaat Netflix verlaten: 'Dat zulke monsters gewoon over straat lopen'",
-                      "MovieMeter",
-                      "04-02-2025 13:09"),
-                  _articleCard(
-                      "📱 Prijswinnende docu over moedige klimmer nu te zien op Netflix",
-                      "Filmandag",
-                      "04-02-2025 13:06"),
-                ],
+              child: ListView.builder(
+                itemCount: _filteredArticles.length,
+                itemBuilder: (context, index) {
+                  return _articleCard(_filteredArticles[index]);
+                },
               ),
             ),
             // Pie de página
@@ -88,9 +244,9 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Text(
-                "Showing 60 of 295 articles",
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                "Showing ${_filteredArticles.length} of ${_articles.length} articles",
+                style: const TextStyle(color: Colors.white),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -100,21 +256,9 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Widget para los botones superiores
-  Widget _customButton(String text) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF404A66), // Azul oscuro
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      ),
-      child: Text(text, style: const TextStyle(color: Colors.white)),
-    );
-  }
-
-  // Widget para las tarjetas de artículos
-  Widget _articleCard(String title, String source, String date) {
+  Widget _articleCard(Map<String, String> article) {
+    final bool hasNetflix =
+        article["content"]!.toLowerCase().contains("netflix");
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
@@ -122,23 +266,29 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
+            Text(article["title"]!,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 5),
-            Text("$source · $date",
+            Text("${article["source"]} · ${article["date"]}",
                 style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+            if (hasNetflix) // Agregar imagen si es sobre Netflix
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Image.asset(
+                  'assets/images/descarga.jpeg',
+                  height: 50,
+                ),
+              ),
             const SizedBox(height: 5),
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF404A66), // Azul oscuro
+                  backgroundColor: const Color(0xFF404A66),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 child: const Text("SHARE LINK",
                     style: TextStyle(color: Colors.white)),
@@ -149,62 +299,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-/*
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.localizations.home_screen_title),
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              context.localizations.welcome_text,
-              style: AppFonts.bodyMd,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: DropdownButton<Locale>(
-                value: context.read<LanguagesBloc>().state.locale,
-                onChanged: (value) => _changeLanguage(value, context),
-                items: [
-                  DropdownMenuItem(
-                    value: const Locale('es', 'ES'),
-                    child: Text(context.localizations.spanish_language_text),
-                  ),
-                  DropdownMenuItem(
-                    value: const Locale('en', 'US'),
-                    child: Text(context.localizations.english_language_text),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _logOut(context),
-              child: Text(context.localizations.log_out_text),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  */
-
-void _logOut(BuildContext context) =>
-    context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
-
-void _changeLanguage(Locale? value, BuildContext context) {
-  context.read<LanguagesBloc>().add(
-        LanguageBlocEvent.changedLanguage(
-          value ?? const Locale.fromSubtags(languageCode: 'es'),
-        ),
-      );
 }
