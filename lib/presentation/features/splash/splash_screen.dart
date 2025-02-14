@@ -8,7 +8,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.loginBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -17,7 +17,7 @@ class SplashScreen extends StatelessWidget {
             ),
             Text(
               'Monalyse',
-              style: AppFonts.bodyMd.copyWith(color: AppColors.primaryWhite),
+              style: AppFonts.bodyMd.copyWith(color: AppColors.loginText),
             ),
             const Divider(
               color: Colors.white,

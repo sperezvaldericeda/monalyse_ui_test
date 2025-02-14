@@ -24,5 +24,11 @@ class AppColors {
   static const Color disableBlack = Color.fromRGBO(24, 54, 78, 0.6);
   static const Color semanticInformation100 = Color.fromRGBO(255, 241, 229, 1);
 
+  static const Color loginBackground = Color(0xFF404A66); // Azul oscuro
+  static const Color loginButton = Colors.black;
+  static const Color loginTextFieldBackground = Colors.white10;
+  static const Color loginHintText = Colors.white54;
+  static const Color loginText = Colors.white;
+
   AppColors._();
 }

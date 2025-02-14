@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:monalyse_ui_test/app/constants/app_colors.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_event.dart';
+import 'package:monalyse_ui_test/presentation/features/home/widgets/card_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _filter = "";
-  String _selectedArticleType = "All";
+
   DateTime? _fromDate;
   DateTime? _toDate;
 
@@ -22,9 +24,13 @@ class _HomeScreenState extends State<HomeScreen> {
       "title": "Artículo $index: Nueva tendencia en streaming",
       "source": "Fuente $index",
       "date": "04-02-2025 13:0$index",
-      "content": index % 3 == 0
+      "content": (index % 4 == 0)
           ? "Netflix anuncia nueva serie exclusiva."
-          : "Otras noticias sobre streaming."
+          : (index % 4 == 1)
+              ? "Otras noticias sobre streaming."
+              : (index % 4 == 2)
+                  ? "Novedad en HBO, nueva película disponible."
+                  : "Disney estrena contenido exclusivo en su plataforma."
     };
   });
 
@@ -51,13 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void _resetFilter() {
     setState(() {
       _filter = "";
-      _selectedArticleType = "All";
+
       _fromDate = null;
       _toDate = null;
     });
   }
 
-  Future<void> _selectDate(BuildContext context, bool isFrom) async {
+  Future<DateTime?> _selectDate(BuildContext context, bool isFrom) async {
     DateTime initialDate =
         isFrom ? _fromDate ?? DateTime.now() : _toDate ?? DateTime.now();
     final DateTime? picked = await showDatePicker(
@@ -66,98 +72,91 @@ class _HomeScreenState extends State<HomeScreen> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null) {
-      setState(() {
-        if (isFrom) {
-          _fromDate = picked;
-        } else {
-          _toDate = picked;
-        }
-      });
-    }
+    return picked;
   }
 
   void _showFilterModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButton<String>(
-                value: _selectedArticleType,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedArticleType = newValue!;
-                  });
-                },
-                items: ["All", "News", "Reviews", "Interviews"]
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              TextField(
-                decoration: const InputDecoration(labelText: "Search"),
-                onChanged: (value) {
-                  _filter = value.toLowerCase();
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      builder: (BuildContext modalContext) {
+        // Aquí usamos modalContext
+        return StatefulBuilder(
+          builder: (modalContext, setModalState) {
+            // Se usa setModalState
+            return Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16.0,
+                  right: 16.0,
+                  top: 16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  TextField(
+                    decoration: const InputDecoration(labelText: "Search"),
+                    onChanged: (value) {
+                      setModalState(() {
+                        _filter = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("From"),
-                      TextButton(
-                        onPressed: () => _selectDate(context, true),
+                      ElevatedButton(
+                        onPressed: () async {
+                          DateTime? picked = await _selectDate(context, true);
+                          if (picked != null) {
+                            setModalState(() {
+                              _fromDate = picked;
+                            });
+                          }
+                        },
                         child: Text(_fromDate == null
-                            ? "Select Date"
+                            ? "Desde"
                             : DateFormat("dd/MM/yyyy").format(_fromDate!)),
                       ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("To"),
-                      TextButton(
-                        onPressed: () => _selectDate(context, false),
+                      ElevatedButton(
+                        onPressed: () async {
+                          DateTime? picked = await _selectDate(context, false);
+                          if (picked != null) {
+                            setModalState(() {
+                              _toDate = picked;
+                            });
+                          }
+                        },
                         child: Text(_toDate == null
-                            ? "Select Date"
+                            ? "Hasta"
                             : DateFormat("dd/MM/yyyy").format(_toDate!)),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          _applyFilter();
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Apply Filters"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          _resetFilter();
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Reset"),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      _applyFilter();
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Apply Filters"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _resetFilter();
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Reset"),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -171,10 +170,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF404A66),
+        backgroundColor: AppColors.loginBackground,
         title: const Text(
           "Mediamonitoring Netf",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: AppColors.loginText),
         ),
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -192,106 +192,29 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            // Filtros
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _showFilterModal(context),
-                  child: const Text("FILTER"),
-                ),
-              ],
+            ElevatedButton(
+              onPressed: () => _showFilterModal(context),
+              child: const Text("Filtros"),
             ),
             const SizedBox(height: 10),
-
-            // Nube de palabras (simulación con un Container)
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade300),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(
-                        (0.1 * 255).toInt(), 0, 0, 0), // Using withValues
-                    blurRadius: 5,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: const Text(
-                  "Netflix  KPN  Klanten  Seizoen  Streamingdienst",
-                  style: TextStyle(fontSize: 16, color: Colors.brown),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Lista de artículos
             Expanded(
               child: ListView.builder(
                 itemCount: _filteredArticles.length,
                 itemBuilder: (context, index) {
-                  return _articleCard(_filteredArticles[index]);
+                  return articleCard(context, _filteredArticles[index]);
                 },
               ),
             ),
-            // Pie de página
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(10),
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: Text(
-                "Showing ${_filteredArticles.length} of ${_articles.length} articles",
-                style: const TextStyle(color: Colors.white),
+                "Mostrando ${_filteredArticles.length} de ${_articles.length} artículos",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey.shade700,
+                ),
                 textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _articleCard(Map<String, String> article) {
-    final bool hasNetflix =
-        article["content"]!.toLowerCase().contains("netflix");
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(article["title"]!,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            Text("${article["source"]} · ${article["date"]}",
-                style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-            if (hasNetflix) // Agregar imagen si es sobre Netflix
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Image.asset(
-                  'assets/images/descarga.jpeg',
-                  height: 50,
-                ),
-              ),
-            const SizedBox(height: 5),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF404A66),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                child: const Text("SHARE LINK",
-                    style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
