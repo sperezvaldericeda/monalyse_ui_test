@@ -10,6 +10,7 @@ import 'package:monalyse_ui_test/app/di/top_bloc_provider.dart';
 import 'package:monalyse_ui_test/app/routes/app_routes.dart';
 import 'package:monalyse_ui_test/presentation/top_blocs/language_bloc/language_bloc.dart';
 import 'package:monalyse_ui_test/presentation/top_blocs/language_bloc/language_bloc_state.dart';
+import 'package:monalyse_ui_test/presentation/top_blocs/theme_cubit/theme_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,27 +29,40 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TopBlocProviders(
-      child: BlocBuilder<LanguagesBloc, LanguageBlocState>(
-        builder: (context, state) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routeInformationProvider: _router.routeInformationProvider,
-            routeInformationParser: _router.routeInformationParser,
-            routerDelegate: _router.routerDelegate,
-            title: AppConstants.appName,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            locale: state.locale,
-            supportedLocales: const [
-              Locale('es', ''),
-              Locale('en', ''),
-            ],
-          );
-        },
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => ThemeCubit()),
+        ],
+        child: BlocBuilder<LanguagesBloc, LanguageBlocState>(
+          builder: (context, languageState) {
+            return BlocBuilder<ThemeCubit, ThemeMode>(
+              builder: (context, themeMode) {
+                return MaterialApp.router(
+                  debugShowCheckedModeBanner: false,
+                  routeInformationProvider: _router.routeInformationProvider,
+                  routeInformationParser: _router.routeInformationParser,
+                  routerDelegate: _router.routerDelegate,
+                  title: AppConstants.appName,
+                  theme: ThemeData.light(),
+                  darkTheme: ThemeData.dark(),
+                  themeMode: themeMode,
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  locale: languageState.locale,
+                  supportedLocales: const [
+                    Locale('es', ''),
+                    Locale('en', ''),
+                    Locale('nl', ''),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

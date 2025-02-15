@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monalyse_ui_test/app/config/app_fonts.dart';
 import 'package:monalyse_ui_test/app/constants/app_colors.dart';
+import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -16,7 +17,7 @@ class SplashScreen extends StatelessWidget {
               flex: 1,
             ),
             Text(
-              'Monalyse',
+              context.localizations.app_name,
               style: AppFonts.bodyMd.copyWith(color: AppColors.loginText),
             ),
             const Divider(

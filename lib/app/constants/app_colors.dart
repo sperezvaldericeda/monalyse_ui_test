@@ -29,6 +29,7 @@ class AppColors {
   static const Color loginTextFieldBackground = Colors.white10;
   static const Color loginHintText = Colors.white54;
   static const Color loginText = Colors.white;
+  static const Color backgroundCard = Color(0xFFE4E5F3);
 
   AppColors._();
 }

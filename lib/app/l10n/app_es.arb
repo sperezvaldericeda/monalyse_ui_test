@@ -1,12 +1,31 @@
 {
-   "@@locale":"es",
+  "@@locale": "es",
   "home_screen_title": "Inicio",
-  "english_language_text": "English",
+  "english_language_text": "Inglés",
   "spanish_language_text": "Español",
+  "dutch_language_text": "Holandés",
   "log_in_text": "Iniciar sesión",
   "log_out_text": "Cerrar sesión",
   "user_text": "Usuario",
   "password_text": "Contraseña",
-  "welcome_text" : "Bienvenido a tu aplicación"
-}
+  "welcome_text": "Bienvenido a tu aplicación",
+  "app_name": "Monalyse",
+  "language_text": "Idioma",
+  "article_text": "Artículo",
+  "filter_text" : "Filtros",
+  "search_text" : "Buscar",
+  "from_text" : "Desde",
+  "to_text" : "Hasta",
+  "apply_filter_text" : "Aplicar filtro", 
+  "reset_text" : "Resetear",
+  "title_home_text" : "Monitoreo de Netflix",
+  "showing_articles_text": "Mostrando {current} de {total} artículos",
+  "link_copied_text" : "Link copiado al portapapeles",
+  "title_card_text" : "Artículo {index}: Nueva tendencia en streaming",
+  "source_card_text" : "Fuente {index}",
+  "content_card_netflix_text" : "Netflix anuncia nueva serie exclusiva.",
+  "content_card_gen_text" : "Otras noticias sobre streaming.",
+  "content_card_hbo_text" : "Novedad en HBO, nueva película disponible.",
+  "content_card_disney_text" : "Disney estrena contenido exclusivo en su plataforma."
 
+}

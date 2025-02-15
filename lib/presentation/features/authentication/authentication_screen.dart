@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:monalyse_ui_test/app/constants/app_colors.dart';
+import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_event.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_state.dart';
@@ -52,7 +53,7 @@ class AuthenticationScreen extends StatelessWidget {
                       // Campos de entrada
                       TextField(
                         decoration: InputDecoration(
-                          hintText: "User",
+                          hintText: context.localizations.user_text,
                           hintStyle:
                               const TextStyle(color: AppColors.loginHintText),
                           filled: true,
@@ -71,7 +72,7 @@ class AuthenticationScreen extends StatelessWidget {
                       TextField(
                         obscureText: true,
                         decoration: InputDecoration(
-                          hintText: "Password",
+                          hintText: context.localizations.password_text,
                           hintStyle:
                               const TextStyle(color: AppColors.loginHintText),
                           filled: true,
@@ -102,8 +103,8 @@ class AuthenticationScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 50, vertical: 15),
                         ),
-                        child: const Text(
-                          "SIGN IN",
+                        child: Text(
+                          context.localizations.log_in_text,
                           style: TextStyle(
                               color: AppColors.loginText, fontSize: 16),
                         ),

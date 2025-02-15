@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:monalyse_ui_test/app/constants/app_colors.dart';
+import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
 
 Widget articleCard(BuildContext context, Map<String, String> article) {
   final String content = article["content"]!.toLowerCase();
@@ -19,6 +20,7 @@ Widget articleCard(BuildContext context, Map<String, String> article) {
   }
 
   return Card(
+    color: AppColors.backgroundCard,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     child: Padding(
       padding: const EdgeInsets.all(10.0),
@@ -65,7 +67,8 @@ Widget articleCard(BuildContext context, Map<String, String> article) {
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: shareLink));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Link copied to clipboard!")),
+                  SnackBar(
+                      content: Text(context.localizations.link_copied_text)),
                 );
               },
               color: const Color(0xFF404A66),

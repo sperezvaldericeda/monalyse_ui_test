@@ -1,10 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:monalyse_ui_test/app/constants/app_colors.dart';
+import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_event.dart';
 import 'package:monalyse_ui_test/presentation/features/home/widgets/card_widget.dart';
+import 'package:monalyse_ui_test/presentation/top_blocs/language_bloc/language_bloc.dart';
+import 'package:monalyse_ui_test/presentation/top_blocs/language_bloc/language_bloc_event.dart';
+import 'package:monalyse_ui_test/presentation/top_blocs/language_bloc/language_bloc_state.dart';
+import 'package:monalyse_ui_test/presentation/top_blocs/theme_cubit/theme_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,30 +21,166 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _filter = "";
-
+  String _searchQuery = "";
   DateTime? _fromDate;
   DateTime? _toDate;
+  List<Map<String, String>> articles = [];
+  final Random random = Random();
+  bool _initialized = false;
 
-  final List<Map<String, String>> _articles = List.generate(25, (index) {
-    return {
-      "title": "Artículo $index: Nueva tendencia en streaming",
-      "source": "Fuente $index",
-      "date": "04-02-2025 13:0$index",
-      "content": (index % 4 == 0)
-          ? "Netflix anuncia nueva serie exclusiva."
-          : (index % 4 == 1)
-              ? "Otras noticias sobre streaming."
-              : (index % 4 == 2)
-                  ? "Novedad en HBO, nueva película disponible."
-                  : "Disney estrena contenido exclusivo en su plataforma."
-    };
-  });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _loadArticles();
+      _initialized = true;
+    } else {
+      _updateArticleTexts();
+    }
+  }
+
+  void _loadArticles() {
+    articles = List.generate(281, (index) {
+      Random random = Random();
+      int year = 2022 + random.nextInt(4);
+      int month = 1 + random.nextInt(12);
+      int day = 1 + random.nextInt(28);
+      String date =
+          "$day-$month-$year 13:${random.nextInt(60).toString().padLeft(2, '0')}";
+
+      return {
+        "id": index.toString(),
+        "title": '',
+        "source": '',
+        "date": date,
+        "content": ''
+      };
+    });
+
+    _updateArticleTexts();
+  }
+
+  void _updateArticleTexts() {
+    setState(() {
+      articles = articles.map((article) {
+        int index = int.parse(article["id"]!);
+        return {
+          "id": article["id"]!,
+          "title": context.localizations.title_card_text(index),
+          "source": context.localizations.source_card_text(index),
+          "date": article["date"]!, // Mantiene la misma fecha
+          "content": (index % 4 == 0)
+              ? context.localizations.content_card_netflix_text
+              : (index % 4 == 1)
+                  ? context.localizations.content_card_gen_text
+                  : (index % 4 == 2)
+                      ? context.localizations.content_card_hbo_text
+                      : context.localizations.content_card_disney_text,
+        };
+      }).toList();
+    });
+  }
+
+  void _logOut(BuildContext context) =>
+      context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
+
+  void _changeLanguage(Locale? value, BuildContext context) {
+    context.read<LanguagesBloc>().add(
+          LanguageBlocEvent.changedLanguage(
+            value ?? const Locale.fromSubtags(languageCode: 'es'),
+          ),
+        );
+  }
+
+  void _openSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return DefaultTabController(
+          length: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TabBar(
+                  tabs: [
+                    Tab(
+                        icon: Icon(Icons.logout),
+                        text: context.localizations.log_out_text),
+                    Tab(
+                        icon: Icon(Icons.language),
+                        text: context.localizations.language_text),
+                    Tab(
+                        icon: Icon(
+                          context.read<ThemeCubit>().state == ThemeMode.dark
+                              ? Icons.dark_mode
+                              : Icons.light_mode,
+                          color: Colors.white,
+                        ),
+                        text: 'Dark Mode'),
+                  ],
+                ),
+                SizedBox(
+                  height: 200,
+                  child: TabBarView(
+                    children: [
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () => _logOut(context),
+                          child: Text(context.localizations.log_out_text),
+                        ),
+                      ),
+                      Center(
+                        child: DropdownButton<Locale>(
+                          value: context.read<LanguagesBloc>().state.locale,
+                          onChanged: (newValue) {
+                            _changeLanguage(newValue, context);
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: const Locale('es', 'ES'),
+                              child: Text(
+                                  context.localizations.spanish_language_text),
+                            ),
+                            DropdownMenuItem(
+                              value: const Locale('en', 'US'),
+                              child: Text(
+                                  context.localizations.english_language_text),
+                            ),
+                            DropdownMenuItem(
+                              value: const Locale('nl', 'NL'),
+                              child: Text(
+                                  context.localizations.dutch_language_text),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () =>
+                              context.read<ThemeCubit>().toggleTheme(),
+                          child: Text('Cambiar tema'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   List<Map<String, String>> get _filteredArticles {
-    return _articles.where((article) {
-      final bool matchesFilter = _filter.isEmpty ||
-          article["content"]!.toLowerCase().contains(_filter);
+    return articles.where((article) {
+      final bool matchesSearch = _searchQuery.isEmpty ||
+          article["content"]!
+              .toLowerCase()
+              .contains(_searchQuery.toLowerCase());
       final bool matchesDate = (_fromDate == null ||
               DateFormat("dd-MM-yyyy HH:mm")
                   .parse(article["date"]!)
@@ -46,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
               DateFormat("dd-MM-yyyy HH:mm")
                   .parse(article["date"]!)
                   .isBefore(_toDate!));
-      return matchesFilter && matchesDate;
+      return matchesSearch && matchesDate;
     }).toList();
   }
 
@@ -56,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _resetFilter() {
     setState(() {
-      _filter = "";
+      _searchQuery = "";
 
       _fromDate = null;
       _toDate = null;
@@ -72,7 +215,17 @@ class _HomeScreenState extends State<HomeScreen> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    return picked;
+    if (picked != null) {
+      setState(() {
+        if (isFrom) {
+          _fromDate = picked;
+        } else {
+          _toDate = picked;
+        }
+      });
+    }
+
+    return null;
   }
 
   void _showFilterModal(BuildContext context) {
@@ -93,11 +246,16 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Text(context.localizations.filter_text,
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
                   TextField(
-                    decoration: const InputDecoration(labelText: "Search"),
+                    decoration: InputDecoration(
+                        labelText: context.localizations.search_text),
                     onChanged: (value) {
-                      setModalState(() {
-                        _filter = value;
+                      setState(() {
+                        _searchQuery = value;
                       });
                     },
                   ),
@@ -115,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         },
                         child: Text(_fromDate == null
-                            ? "Desde"
+                            ? context.localizations.from_text
                             : DateFormat("dd/MM/yyyy").format(_fromDate!)),
                       ),
                       ElevatedButton(
@@ -128,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         },
                         child: Text(_toDate == null
-                            ? "Hasta"
+                            ? context.localizations.to_text
                             : DateFormat("dd/MM/yyyy").format(_toDate!)),
                       ),
                     ],
@@ -142,14 +300,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           _applyFilter();
                           Navigator.pop(context);
                         },
-                        child: const Text("Apply Filters"),
+                        child: Text(context.localizations.apply_filter_text),
                       ),
                       ElevatedButton(
                         onPressed: () {
                           _resetFilter();
                           Navigator.pop(context);
                         },
-                        child: const Text("Reset"),
+                        child: Text(context.localizations.reset_text),
                       ),
                     ],
                   ),
@@ -162,63 +320,68 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _logOut(BuildContext context) =>
-      context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.loginBackground,
-        title: const Text(
-          "Mediamonitoring Netf",
-          style: TextStyle(
-              fontWeight: FontWeight.bold, color: AppColors.loginText),
-        ),
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset('assets/logos/monalyse_logo_2.jpeg', height: 50),
-        ),
-        actions: [
-          IconButton(
-            color: Colors.white,
-            icon: const Icon(Icons.logout),
-            onPressed: () => _logOut(context),
+    return BlocListener<LanguagesBloc, LanguageBlocState>(
+      listener: (context, state) {
+        _loadArticles();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: AppColors.loginBackground,
+          title: Text(
+            context.localizations.title_home_text,
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: AppColors.loginText),
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () => _showFilterModal(context),
-              child: const Text("Filtros"),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _filteredArticles.length,
-                itemBuilder: (context, index) {
-                  return articleCard(context, _filteredArticles[index]);
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Text(
-                "Mostrando ${_filteredArticles.length} de ${_articles.length} artículos",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700,
-                ),
-                textAlign: TextAlign.center,
-              ),
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset('assets/logos/monalyse_logo_2.jpeg', height: 50),
+          ),
+          actions: [
+            IconButton(
+              color: Colors.white,
+              icon: const Icon(Icons.settings),
+              onPressed: () => _openSettings(context),
             ),
           ],
         ),
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Text(
+                  context.localizations.showing_articles_text(
+                      _filteredArticles.length, articles.length),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _filteredArticles.length,
+                  itemBuilder: (context, index) {
+                    return articleCard(context, _filteredArticles[index]);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _showFilterModal(context),
+          backgroundColor: AppColors.loginBackground,
+          child: Icon(Icons.filter_list, color: Colors.white),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ),
     );
   }

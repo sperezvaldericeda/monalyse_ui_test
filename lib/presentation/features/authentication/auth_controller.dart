@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:monalyse_ui_test/app/constants/app_colors.dart';
-import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
+
 import 'package:monalyse_ui_test/app/types/auth_status.dart';
-import 'package:monalyse_ui_test/app/types/screen_status.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_bloc.dart';
-import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_event.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_state.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/authentication_screen.dart';
 import 'package:monalyse_ui_test/presentation/widgets/custom_circular_loader.dart';
