@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:monalyse_ui_test/app/constants/app_colors.dart';
 import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
 
-Widget articleCard(BuildContext context, Map<String, String> article) {
+Widget articleCard(
+    BuildContext context, Map<String, String> article, bool isDarkMode) {
   final String content = article["content"]!.toLowerCase();
   String? imagePath;
   String shareLink = "https://www.google.com";
@@ -20,7 +21,7 @@ Widget articleCard(BuildContext context, Map<String, String> article) {
   }
 
   return Card(
-    color: AppColors.backgroundCard,
+    color: isDarkMode ? Colors.grey[850] : AppColors.backgroundCard,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     child: Padding(
       padding: const EdgeInsets.all(10.0),
@@ -33,9 +34,10 @@ Widget articleCard(BuildContext context, Map<String, String> article) {
               Expanded(
                 child: Text(
                   article["title"]!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
                 ),
               ),
@@ -52,18 +54,23 @@ Widget articleCard(BuildContext context, Map<String, String> article) {
           const SizedBox(height: 5),
           Text(
             "${article["source"]} · ${article["date"]}",
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            style: TextStyle(
+                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                fontSize: 12),
           ),
           const SizedBox(height: 10),
           Text(
             article["content"]!,
-            style: const TextStyle(fontSize: 14),
+            style: TextStyle(
+                fontSize: 14,
+                color: isDarkMode ? Colors.white70 : Colors.black87),
           ),
           const SizedBox(height: 10),
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: const Icon(Icons.share, color: AppColors.loginBackground),
+              icon: Icon(Icons.share,
+                  color: isDarkMode ? Colors.white70 : AppColors.black),
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: shareLink));
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -71,7 +78,7 @@ Widget articleCard(BuildContext context, Map<String, String> article) {
                       content: Text(context.localizations.link_copied_text)),
                 );
               },
-              color: const Color(0xFF404A66),
+              color: isDarkMode ? Colors.white70 : Color(0xFF404A66),
             ),
           ),
         ],

@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, String>> articles = [];
   final Random random = Random();
   bool _initialized = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void didChangeDependencies() {
@@ -81,8 +82,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _logOut(BuildContext context) =>
-      context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
+  void _logOut(BuildContext context) {
+    Navigator.pop(context);
+    context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
+  }
 
   void _changeLanguage(Locale? value, BuildContext context) {
     context.read<LanguagesBloc>().add(
@@ -92,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
   }
 
-  void _openSettings(BuildContext context) {
+  void _openSettings(BuildContext context, bool isDarkMode) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -107,19 +110,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 TabBar(
                   tabs: [
                     Tab(
-                        icon: Icon(Icons.logout),
+                        icon: Icon(
+                          Icons.logout,
+                        ),
                         text: context.localizations.log_out_text),
                     Tab(
-                        icon: Icon(Icons.language),
+                        icon: Icon(
+                          Icons.language,
+                        ),
                         text: context.localizations.language_text),
                     Tab(
                         icon: Icon(
                           context.read<ThemeCubit>().state == ThemeMode.dark
                               ? Icons.dark_mode
                               : Icons.light_mode,
-                          color: Colors.white,
                         ),
-                        text: 'Dark Mode'),
+                        text: 'Cambia el tema'),
                   ],
                 ),
                 SizedBox(
@@ -322,67 +328,103 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return BlocListener<LanguagesBloc, LanguageBlocState>(
-      listener: (context, state) {
-        _loadArticles();
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: AppColors.loginBackground,
-          title: Text(
-            context.localizations.title_home_text,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: AppColors.loginText),
-          ),
-          leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset('assets/logos/monalyse_logo_2.jpeg', height: 50),
-          ),
-          actions: [
-            IconButton(
-              color: Colors.white,
-              icon: const Icon(Icons.settings),
-              onPressed: () => _openSettings(context),
+        listener: (context, state) {
+          _loadArticles();
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          appBar: AppBar(
+            backgroundColor:
+                isDarkMode ? Colors.grey[900] : AppColors.loginBackground,
+            title: Text(
+              context.localizations.title_home_text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.grey[400] : AppColors.loginText,
+              ),
             ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(
-                  context.localizations.showing_articles_text(
-                      _filteredArticles.length, articles.length),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade700,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+                  Image.asset('assets/logos/monalyse_logo_2.jpeg', height: 50),
+            ),
+            actions: [
+              IconButton(
+                color: isDarkMode ? Colors.grey[400] : Colors.white,
+                icon: const Icon(Icons.settings),
+                onPressed: () => _openSettings(context, isDarkMode),
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
+                    context.localizations.showing_articles_text(
+                        _filteredArticles.length, articles.length),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDarkMode ? Colors.white : Colors.grey.shade700,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _filteredArticles.length,
+                    itemBuilder: (context, index) {
+                      return articleCard(
+                          context, _filteredArticles[index], isDarkMode);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          floatingActionButton: Stack(
+            children: [
+              Positioned(
+                left: screenWidth * 0.1,
+                bottom: 20,
+                child: FloatingActionButton(
+                  onPressed: () => _showFilterModal(context),
+                  backgroundColor:
+                      isDarkMode ? Colors.grey[800] : AppColors.loginBackground,
+                  child: Icon(Icons.filter_list, color: Colors.white),
                 ),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _filteredArticles.length,
-                  itemBuilder: (context, index) {
-                    return articleCard(context, _filteredArticles[index]);
-                  },
+              Positioned(
+                right: screenWidth * 0.04,
+                bottom: 20,
+                child: FloatingActionButton(
+                  onPressed: _scrollToTop,
+                  backgroundColor:
+                      isDarkMode ? Colors.grey[800] : AppColors.loginBackground,
+                  child: Icon(Icons.arrow_upward, color: Colors.white),
                 ),
               ),
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _showFilterModal(context),
-          backgroundColor: AppColors.loginBackground,
-          child: Icon(Icons.filter_list, color: Colors.white),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      ),
-    );
+        ));
+  }
+
+  void _scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 }
