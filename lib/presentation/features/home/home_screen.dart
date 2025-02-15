@@ -83,7 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _logOut(BuildContext context) {
-    Navigator.pop(context);
+    Navigator.pop(context); // state.userAuthStatus.isLoggedIn()
+
     context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
   }
 
