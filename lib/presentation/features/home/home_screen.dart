@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
           "id": article["id"]!,
           "title": context.localizations.title_card_text(index),
           "source": context.localizations.source_card_text(index),
-          "date": article["date"]!, // Mantiene la misma fecha
+          "date": article["date"]!,
           "content": (index % 4 == 0)
               ? context.localizations.content_card_netflix_text
               : (index % 4 == 1)
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _logOut(BuildContext context) {
-    Navigator.pop(context); // state.userAuthStatus.isLoggedIn()
+    Navigator.pop(context);
 
     context.read<AuthBloc>().add(const AuthEvent.signOutEvent());
   }
@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? Icons.dark_mode
                               : Icons.light_mode,
                         ),
-                        text: 'Cambia el tema'),
+                        text: context.localizations.theme_text),
                   ],
                 ),
                 SizedBox(
@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ElevatedButton(
                           onPressed: () =>
                               context.read<ThemeCubit>().toggleTheme(),
-                          child: Text('Cambiar tema'),
+                          child: Text(context.localizations.theme_text),
                         ),
                       ),
                     ],
@@ -240,10 +240,8 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       isScrollControlled: true,
       builder: (BuildContext modalContext) {
-        // Aquí usamos modalContext
         return StatefulBuilder(
           builder: (modalContext, setModalState) {
-            // Se usa setModalState
             return Padding(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,

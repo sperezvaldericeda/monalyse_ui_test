@@ -14,11 +14,42 @@ class AuthenticationScreen extends StatefulWidget {
 }
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.localizations.log_in_text),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(context.localizations.okey_text),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _validateAndLogin() {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty || password.isEmpty) {
+      _showErrorDialog(context.localizations.fill_fields_text);
+    } else {
+      context.read<AuthBloc>().add(const AuthEvent.signInEvent());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ThemeCubit, ThemeMode>(
       listener: (context, state) {
-        // Se ejecuta cuando cambia el tema, forzando la actualización
         setState(() {});
       },
       child: BlocBuilder<ThemeCubit, ThemeMode>(
@@ -75,6 +106,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextField(
+                          controller: _usernameController,
                           decoration: InputDecoration(
                             hintText: context.localizations.user_text,
                             hintStyle: TextStyle(
@@ -99,6 +131,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         ),
                         const SizedBox(height: 10),
                         TextField(
+                          controller: _passwordController,
                           obscureText: true,
                           decoration: InputDecoration(
                             hintText: context.localizations.password_text,
@@ -125,11 +158,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: () {
-                            context
-                                .read<AuthBloc>()
-                                .add(const AuthEvent.signInEvent());
-                          },
+                          onPressed: _validateAndLogin,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDarkMode
                                 ? Colors.blueGrey[700]

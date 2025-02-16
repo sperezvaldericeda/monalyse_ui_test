@@ -18,7 +18,7 @@
   "to_text" : "Hasta",
   "apply_filter_text" : "Aplicar filtro", 
   "reset_text" : "Resetear",
-  "title_home_text" : "Monitoreo de Netflix",
+  "title_home_text" : "Monitoreo de Streming",
   "showing_articles_text": "Mostrando {current} de {total} artículos",
   "link_copied_text" : "Link copiado al portapapeles",
   "title_card_text" : "Artículo {index}: Nueva tendencia en streaming",
@@ -26,6 +26,10 @@
   "content_card_netflix_text" : "Netflix anuncia nueva serie exclusiva.",
   "content_card_gen_text" : "Otras noticias sobre streaming.",
   "content_card_hbo_text" : "Novedad en HBO, nueva película disponible.",
-  "content_card_disney_text" : "Disney estrena contenido exclusivo en su plataforma."
+  "content_card_disney_text" : "Disney estrena contenido exclusivo en su plataforma.",
+  "okey_text" : "Ok",
+  "fill_fields_text" : "Por favor, rellena todos los campos antes de continuar.",
+  "theme_text" : "Cambiar tema"
+
 
 }

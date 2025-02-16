@@ -7,11 +7,9 @@ import 'package:monalyse_ui_test/domain/repository_contracts/app_repository_cont
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_event.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_state.dart';
 
-/// A [Bloc] responsible for managing user authentication.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AppRepositoryContract _repository;
 
-  /// Constructs an [AuthBloc] with the provided dependencies.
   AuthBloc({
     required AppRepositoryContract repositoryContract,
   })  : _repository = repositoryContract,
@@ -37,7 +35,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  /// Maps the [AuthEvent.mockedSignIn] event to the appropriate state.
   FutureOr<void> _mapSignInEventToState(
     AuthEvent event,
     Emitter<AuthState> emit,
