@@ -373,10 +373,12 @@ class _HomeScreenV2State extends State<HomeScreenV2> {
           backgroundColor:
               isDarkMode ? Colors.grey[900] : AppColors.loginBackground,
           title: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+            width: screenWidth * 0.83,
+            height: 35,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.grey[800] : Colors.white,
-              borderRadius: BorderRadius.circular(40),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isDarkMode ? Colors.white54 : Colors.grey.shade300,
               ),
@@ -429,8 +431,8 @@ class _HomeScreenV2State extends State<HomeScreenV2> {
             ),
           ),
           leading: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset('assets/logos/monalyse_logo_2.jpeg', height: 50),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+            child: Image.asset('assets/logos/monalyse_logo.png', height: 80),
           ),
           actions: [
             IconButton(
