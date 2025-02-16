@@ -16,7 +16,7 @@ class AuthController extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (state.userAuthStatus.isLoggedIn()) {
+        /*     if (state.userAuthStatus.isLoggedIn()) {
           return FutureBuilder(
             future: Future.delayed(const Duration(seconds: 3)),
             builder: (context, snapshot) {
@@ -32,9 +32,23 @@ class AuthController extends StatelessWidget {
             },
           );
         }
+        */
         return state.userAuthStatus.when(
+          loggedIn: () => FutureBuilder(
+            future: Future.delayed(const Duration(seconds: 3)),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(
+                    child: CustomCircularLoader(),
+                  ),
+                );
+              } else {
+                return const HomeScreen();
+              }
+            },
+          ),
           unidentified: () => const AuthenticationScreen(),
-          loggedIn: () => const HomeScreen(),
           error: () => const Text('An error happened'),
         );
       },

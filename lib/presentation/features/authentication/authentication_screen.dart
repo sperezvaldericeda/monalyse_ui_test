@@ -4,7 +4,6 @@ import 'package:monalyse_ui_test/app/constants/app_colors.dart';
 import 'package:monalyse_ui_test/app/extensions/context_extensions.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_event.dart';
-import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_state.dart';
 import 'package:monalyse_ui_test/presentation/top_blocs/theme_cubit/theme_cubit.dart';
 
 class AuthenticationScreen extends StatefulWidget {

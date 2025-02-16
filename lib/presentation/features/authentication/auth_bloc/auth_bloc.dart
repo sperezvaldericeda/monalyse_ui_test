@@ -21,7 +21,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEvent>(
       (event, emit) async {
         await event.when(
-          signOutEvent: () {
+          signOutEvent: () async {
+            await _repository.setValidToken(false);
             emit(
               state.copyWith(
                 screenStatus: const ScreenStatus.initial(),

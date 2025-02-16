@@ -405,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Positioned(
-                right: screenWidth * 0.04,
+                right: screenWidth * 0.03,
                 bottom: 20,
                 child: FloatingActionButton(
                   onPressed: _scrollToTop,
