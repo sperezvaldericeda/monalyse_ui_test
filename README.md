@@ -1,6 +1,6 @@
 # Monalyse
 
-**Monalyse** is a media monitoring application that allows users to search, filter, and view articles about streaming trends. The app supports multiple languages, allows switching between light and dark themes, and offers an optimized user experience with floating buttons and advanced filters.
+**Monalyse** is a media monitoring application that allows users to search, filter, and view articles about streaming and sports trends. The app supports multiple languages, allows switching between light and dark themes, and offers an optimized user experience with floating buttons and advanced filters.
 
 ## 📌 Features
 
@@ -8,7 +8,7 @@
 - 🌍 **Multilingual support** (Spanish, English, Dutch).
 - 🌙 **Customizable dark and light mode**.
 - 🎛️ **Settings modal** with language switching, dark mode, and logout.
-- 📜 **Dynamically generated article list** with dates ranging from 2022 to 2025.
+- 📜 **Dynamically generated article list** which depends on dropdown selector.
 - 🔄 **Scroll-to-top button** to quickly return to the top of the list.
 - 🛠 **BLoC-based architecture** for state management.
 

@@ -29,5 +29,12 @@
   "content_card_disney_text" : "Disney releases exclusive content on its platform.",
   "okey_text" : "Ok",
   "fill_fields_text" : "Please fill in all fields before continuing.",
-  "theme_text" : "Change theme"
+  "theme_text" : "Change theme",
+  "content_card_sport_1_text" : "Latest sports news about Football, Tennis, and more!",
+  "content_card_sport_2_text" : "Breaking updates on Basketball, Golf, and other major sports!",
+  "content_card_sport_3_text" : "Stay tuned for the latest in Baseball, Rugby, and more!",
+  "content_card_sport_4_text" : "Exciting highlights from Formula 1, Cycling, and beyond!",
+  "sports_news_text" : "Sports news {index}",
+  "title_home_2_text" : "Sports Monitoring"
+
 }

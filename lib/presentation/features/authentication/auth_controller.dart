@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/auth_bloc/auth_state.dart';
 import 'package:monalyse_ui_test/presentation/features/authentication/authentication_screen.dart';
+import 'package:monalyse_ui_test/presentation/features/home/home_screen_v2.dart';
 import 'package:monalyse_ui_test/presentation/widgets/custom_circular_loader.dart';
-import 'package:monalyse_ui_test/presentation/features/home/home_screen.dart';
 import 'dart:async';
 
 class AuthController extends StatelessWidget {
@@ -26,7 +26,8 @@ class AuthController extends StatelessWidget {
                   ),
                 );
               } else {
-                return const HomeScreen();
+                //return const HomeScreen();
+                return const HomeScreenV2();
               }
             },
           ),

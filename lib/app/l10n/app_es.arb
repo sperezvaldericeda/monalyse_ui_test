@@ -29,7 +29,13 @@
   "content_card_disney_text" : "Disney estrena contenido exclusivo en su plataforma.",
   "okey_text" : "Ok",
   "fill_fields_text" : "Por favor, rellena todos los campos antes de continuar.",
-  "theme_text" : "Cambiar tema"
+  "theme_text" : "Cambiar tema",
+  "content_card_sport_1_text" : "Últimas noticias deportivas sobre Fútbol, Tenis y más.",
+  "content_card_sport_2_text" : "Actualizaciones de última hora sobre Baloncesto, Golf y otros deportes importantes.",
+  "content_card_sport_3_text" : "Mantente al día con las últimas novedades de Béisbol, Rugby y más.",
+  "content_card_sport_4_text" : "Lo más destacado de la Fórmula 1, Ciclismo y mucho más.",
+  "sports_news_text" : "Noticia de deporte {index}",
+  "title_home_2_text" : "Monitoreo de Deportes"
 
 
 }

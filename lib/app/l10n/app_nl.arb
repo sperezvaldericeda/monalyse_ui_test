@@ -29,5 +29,12 @@
   "content_card_disney_text" : "Disney brengt exclusieve content uit op zijn platform.",
   "okey_text" : "Ok",
   "fill_fields_text" : "Vul alle velden in voordat u doorgaat.",
-  "theme_text" : "Thema wijzigen"
+  "theme_text" : "Thema wijzigen",
+  "content_card_sport_1_text" : "Laatste sportnieuws over Voetbal, Tennis en meer.",
+  "content_card_sport_2_text" : "Breaking updates over Basketbal, Golf en andere grote sporten.",
+  "content_card_sport_3_text" : "Blijf op de hoogte van het laatste nieuws over Honkbal, Rugby en meer.",
+  "content_card_sport_4_text" : "Spannende hoogtepunten van Formule 1, Wielrennen en nog veel meer.",
+  "sports_news_text" : "Sportnieuws {index}",
+  "title_home_2_text" : "Sportmonitoring"
+
 }
