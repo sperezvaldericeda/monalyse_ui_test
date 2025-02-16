@@ -79,7 +79,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.black : AppColors.loginBackground,
+                  color: isDarkMode
+                      ? const Color.fromARGB(255, 62, 62, 62)
+                      : AppColors.loginBackground,
                 ),
                 child: Center(
                   child: Padding(
@@ -161,20 +163,20 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                           onPressed: _validateAndLogin,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDarkMode
-                                ? Colors.blueGrey[700]
-                                : AppColors.loginButton,
+                                ? AppColors.loginHintText
+                                : AppColors.primaryWhite,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
+                                horizontal: 30, vertical: 5),
                           ),
                           child: Text(
                             context.localizations.log_in_text,
                             style: TextStyle(
                                 color: isDarkMode
                                     ? Colors.white
-                                    : AppColors.loginText,
+                                    : AppColors.loginBackground,
                                 fontSize: 16),
                           ),
                         ),
